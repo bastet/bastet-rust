@@ -1,7 +1,26 @@
 before_script:
-  - ls -lah
+  - cargo build
+stages:
+  - build
+  - test
+  - deploy
+job_build:
+  stage: build
+  script:
+    - cargo build
+  tags:
+    - rust
 job_test:
+  stage: test
   script:
     - cargo test
   tags:
     - rust
+job_deploy:
+  stage: deploy
+  script:
+    - mkdir -p $release_route/linux/$CI_BUILD_REF_NAME
+    - cp target/debug/bastet $release_route/linux/$CI_BUILD_REF_NAME/bastet
+  tags:
+    - rust
+    - bastet.link
